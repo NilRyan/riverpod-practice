@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final counterProvider = StateProvider.autoDispose((ref) => 0);
+final counterProvider = StateProvider((ref) => 0);
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -60,6 +60,11 @@ class CounterPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Counter'),
+        actions: [
+          IconButton(onPressed: () {
+            ref.invalidate(counterProvider);
+          }, icon: const Icon(Icons.refresh),)
+        ],
       ),
       body: Center(
         child: Text(
