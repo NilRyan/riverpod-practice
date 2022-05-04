@@ -16,7 +16,14 @@ class FakeWebsocketClient implements WebsocketClient {
   }
 }
 
-final counterProvider = StateProvider((ref) => 0);
+final websocketClientProvider = Provider<WebsocketClient>((ref) {
+  return FakeWebsocketClient();
+});
+
+final counterProvider = StreamProvider<int>((ref) {
+  final wsClient = ref.watch(websocketClientProvider);
+  return wsClient.getCounterStream();
+});
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -71,23 +78,8 @@ class CounterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final int counter = ref.watch(counterProvider);
+    final AsyncValue<int> counter = ref.watch(counterProvider);
 
-    ref.listen<int>(counterProvider, (previous, next) {
-      if (next >= 5 ) {
-        showDialog(context: context, builder: (context) {
-          return AlertDialog(
-            title: Text('Warning'),
-            content: Text('Counter dangerously high. Considering resetting it.'),
-            actions: [
-              TextButton(onPressed: () {
-                Navigator.of(context).pop();
-              }, child: Text('OK'))
-            ],
-          );
-        });
-      }
-    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Counter'),
@@ -99,15 +91,9 @@ class CounterPage extends ConsumerWidget {
       ),
       body: Center(
         child: Text(
-          counter.toString(),
+          counter.value.toString(),
           style: Theme.of(context).textTheme.displayMedium,
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          ref.read(counterProvider.notifier).state++;
-        },
       ),
     );
   }
