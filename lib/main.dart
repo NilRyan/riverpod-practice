@@ -84,14 +84,22 @@ class CounterPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Counter'),
         actions: [
-          IconButton(onPressed: () {
-            ref.invalidate(counterProvider);
-          }, icon: const Icon(Icons.refresh),)
+          IconButton(
+            onPressed: () {
+              ref.invalidate(counterProvider);
+            },
+            icon: const Icon(Icons.refresh),
+          )
         ],
       ),
       body: Center(
         child: Text(
-          counter.value.toString(),
+          counter
+              .when(
+                  data: (int value) => value,
+                  error: (Object e, _) => e,
+                  loading: () => 0)
+              .toString(),
           style: Theme.of(context).textTheme.displayMedium,
         ),
       ),
