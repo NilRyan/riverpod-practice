@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+abstract class WebsocketClient {
+  Stream<int> getCounterStream();
+}
+
+class FakeWebsocketClient implements WebsocketClient {
+  @override
+  Stream<int> getCounterStream() async* {
+    int i = 0;
+    while (true) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      yield i++;
+    }
+  }
+}
+
 final counterProvider = StateProvider((ref) => 0);
 
 void main() {
