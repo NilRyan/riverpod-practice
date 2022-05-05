@@ -90,7 +90,7 @@ class CounterPage extends ConsumerWidget {
               .when(
                   data: (int value) => value,
                   error: (Object e, _) => e,
-                  loading: () => 0)
+                  loading: () => 5)
               .toString(),
           style: Theme.of(context).textTheme.displayMedium,
         ),
